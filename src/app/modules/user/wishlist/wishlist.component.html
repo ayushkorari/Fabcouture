@@ -1,0 +1,31 @@
+
+<div class="container" *ngIf="products.length==0" style="margin-top:50px;min-height:600px;display:table">
+  <div style="display:table-cell;vertical-align:middle;width:100%">
+<h2 style="text-align:center;color:white;max-height:100px"><span style="padding:5px;border-radius:6px;background-color:#66d9ff">Your WishList Is Empty</span></h2>
+</div>
+</div>
+
+<div class="container-fluid heading" *ngIf="products.length" style="margin: auto;min-height: 565px">
+    <div style="text-align: center" [style.border-bottom]="'1px solid #FE980F'">
+      <h4 class="recommended" style="width:300px">
+        WISHLIST
+      </h4>
+    </div>
+    <br>
+   
+      <div class="row" [style.margin-left]="isMobileDevice()?'1px':null" style="width:100%;margin: auto">
+
+        <div class="col-sm-3 col-6"  data-aos="zoom-in-up"
+          data-aos-duration="1500" style="margin-bottom: 10px;float:none;" *ngFor="let product of products;let i = index">
+
+          <app-single-product [product]="product" [wishlist]="true" (removeProduct)="removeProduct(i)"></app-single-product>
+        </div>
+       
+      </div>
+    <p class="load-more">
+      <button mat-raised-button class="load-more-button" *ngIf="loadMoreProducts" (click)="loadRecommendedProducts()">
+        Load More Products
+      </button>
+    </p>
+  </div>
+<app-footer></app-footer>

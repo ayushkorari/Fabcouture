@@ -1,0 +1,277 @@
+<body>
+  <div class="container-fluid" style="min-height:600px;margin-bottom:0px">
+    <div class="row" style="padding-top:50px;padding-bottom:50px">
+      <div class="col-sm-8">
+        <ul style="list-style-type:none">
+          <li *ngFor="let address of addresses;let i=index" (click)="changeSelectedAddress(i)"
+            style="cursor:pointer;display:inline-block;margin-left:10px;margin-bottom:10px">
+            <div [ngStyle]="(selectedAddress&&selectedAddress._id===address._id)?selectedAddressStyles:addressStyles"
+              class="alert" style="width:300px;height:266px;overflow-x:hidden;font-size:14px">
+              <div style="overflow:auto;max-height:245px;top:0;position:absolute;">
+                <dl style="margin-top:10px">
+                  <dt>
+                    {{address.name}} {{address.isDefault?'(Default)':''}} <span
+                      style="margin-left:10px;background-color:#2cd2b1;padding:5px;border-radius:16px;color:white">{{address.type}}</span>
+                  </dt>
+                  <br>
+                  <dd>{{address.line2}}</dd>
+                  <dd>{{address.line1}}</dd>
+                  <dd>{{address.city}} - {{address.pinCode}}</dd>
+                  <dd>{{address.state}}</dd>
+                  <dd>Mobile : {{address.phoneNo}}</dd>
+                </dl>
+                <hr>
+              </div>
+              <div style="height:25px;position:absolute;bottom:0;width:80%;padding-bottom:5px">
+                <span style="float:left;cursor:pointer;color:gray"
+                  (click)="$event.preventDefault();$event.stopPropagation();removeAddress(i)"><b><span
+                      style="font-size:16px">&times;</span> Remove</b></span><span
+                  style="float:right;color:#2cd2b1;cursor:pointer"
+                  (click)="$event.preventDefault();$event.stopPropagation();editAddress(address)"><b>Edit</b></span><br>
+              </div>
+            </div>
+          </li>
+          <li style="display:inline-block;margin-left:10px;margin-bottom:10px">
+
+            <div class="alert"
+              style="width:300px;height:268px;overflow-x:hidden;background-color:#f4fdfb;border: 1px solid #b9f0e5;font-size:14px">
+
+              <div style="display:table;height:100%;width:100%;cursor:pointer"
+                (click)="createForm();toggleBillingAddress();showMenu = true;editing = false"><a
+                  style="display:table-cell;vertical-align:middle;text-align:center;margin:auto;color:#2cd2b1"><b>
+                    <button mat-mini-fab
+                      style="margin-right:10px;color:#2cd2b1;border:1px solid #2cd2b1;background-color:white">
+                      <h5>+</h5>
+                    </button>New Address</b></a> </div>
+            </div>
+          </li>
+        </ul>
+        <div
+          style="background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);z-index:50;position:fixed;height:100%;width:100%;top:0px;left:0%;padding-top:10px"
+          *ngIf="showMenu" [@modal]="'in'">
+          <div class="row">
+            <div class="col-sm-12" style="overflow: auto">
+              <mat-card
+                style="overflow:auto;max-width:500px;min-height:700px;max-height:80%;margin:auto ;background-image: url('');text-align:center;box-shadow: 0 0 10px rgba(0,0,0, .65);margin-top:0px">
+
+                <mat-card-subtitle *ngIf="!editing"><button mat-raised-button type="button" color="primary"
+                    style="background-color:#3f51b5;height:40px;margin-left:20px" (click)="getLocation()"><b>Use
+                      Current
+                      Location</b></button></mat-card-subtitle>
+
+                <form [formGroup]="addressForm" #addForm=ngForm
+                  (submit)="addForm.valid&&(!editing?addNewAddress():saveEditedAddress())">
+
+
+                  <mat-form-field style="width:100%">
+                    <input formControlName="pinCode" matInput placeholder="Pincode"
+                      (blur)="searchByPin(searchBox.value)" #searchBox required>
+                    <mat-icon matSuffix>
+                      <mat-spinner *ngIf="pincodeSpinner" [diameter]="30"></mat-spinner>
+                    </mat-icon>
+                    <!-- <mat-error *ngIf="addressForm.controls.pincode.invalid">{{addressForm.get('pincode').errors.pattern?'Invalid Pincode':addressForm.get('pincode').errors.required?' Pincode is required':''}}</mat-error> -->
+                  </mat-form-field><br>
+
+
+                  <mat-form-field style="width:100%">
+                    <input formControlName="line1" matInput placeholder="Locality" required>
+                    <!-- <mat-error *ngIf="addressForm.controls.locality.invalid">{{addressForm.get('locality').errors.pattern?'Invalid Locality':addressForm.get('locality').errors.required?' Locality is required':''}}</mat-error> -->
+                  </mat-form-field><br>
+
+
+                  <mat-form-field style="width:100%">
+                    <input formControlName="city" matInput placeholder="City/District" required>
+                    <!-- <mat-error *ngIf="addressForm.controls.district.invalid">{{addressForm.get('district').errors.pattern?'Invalid District':addressForm.get('district').errors.required?' District is required':''}}</mat-error> -->
+                  </mat-form-field><br>
+
+
+                  <mat-form-field style="width:100%">
+                    <input formControlName="state" matInput placeholder="State" required>
+                    <!-- <mat-error *ngIf="addressForm.controls.state.invalid">{{addressForm.get('state').errors.pattern?'Invalid State':addressForm.get('state').errors.required?' State is required':''}}</mat-error> -->
+                  </mat-form-field><br>
+
+                  <mat-form-field style="width:100%">
+                    <input formControlName="line2" matInput placeholder="Address" ngx-google-places-autocomplete
+                      #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)" #address
+                     required>
+                    <!-- <mat-error *ngIf="addressForm.controls.address.invalid">{{addressForm.get('address').errors.pattern?'Invalid Address':addressForm.get('address').errors.required?' Address is required':''}}</mat-error> -->
+                  </mat-form-field><br>
+
+                  <mat-form-field style="width:49%;float:left">
+                    <input formControlName="name" matInput placeholder="Name" required>
+                    <!-- <mat-error *ngIf="addressForm.controls.name.invalid">{{addressForm.get('name').errors.pattern?'Invalid Name':addressForm.get('name').errors.required?' Name is required':''}}</mat-error> -->
+                  </mat-form-field>
+
+                  <mat-form-field style="width:49%;float:right">
+                    <input formControlName="phoneNo" matInput placeholder="Mobile" required>
+                    <!-- <mat-error *ngIf="addressForm.controls.mobile.invalid">{{addressForm.get('mobile').errors.pattern?'Invalid Mobile':addressForm.get('mobile').errors.required?' Mobile is required':''}}</mat-error> -->
+                  </mat-form-field><br>
+
+                  <mat-radio-group formControlName="type">
+
+                    <mat-radio-button value="HOME" style="margin:20px">Home</mat-radio-button>
+                    <mat-radio-button value="WORK" style="margin:20px">Office</mat-radio-button>
+                    <!-- <mat-error *ngIf="addressForm.controls.type.invalid&&(addressForm.controls.type.dirty||addressForm.controls.type.touched||addForm.submitted)">Select a gender</mat-error> -->
+                  </mat-radio-group>
+
+
+                  <span style="font-size:15px">
+                    <mat-slide-toggle formControlName="isDefault">DEFAULT</mat-slide-toggle>
+                  </span>
+                  <br>
+                  <span style="font-size:15px">
+                    <mat-slide-toggle formControlName="hasSameBillingAddress">Billing Address Same As Delivery Address</mat-slide-toggle>
+                  </span>
+                  <br><br>
+                  <ng-container *ngIf="addressForm.controls.billingAddress" formGroupName="billingAddress">
+
+
+                    <mat-form-field style="width:100%">
+                      <input formControlName="pinCode" matInput placeholder="Pincode"
+                        (blur)="searchByPin(searchBox1.value,true)" #searchBox1 required>
+                      <mat-icon matSuffix>
+                        <mat-spinner *ngIf="billingPincodeSpinner" [diameter]="30"></mat-spinner>
+                      </mat-icon>
+                      <!-- <mat-error *ngIf="addressForm.controls.pincode.invalid">{{addressForm.get('pincode').errors.pattern?'Invalid Pincode':addressForm.get('pincode').errors.required?' Pincode is required':''}}</mat-error> -->
+                    </mat-form-field><br>
+
+
+                    <mat-form-field style="width:100%">
+                      <input formControlName="line1" matInput placeholder="Locality" required>
+                      <!-- <mat-error *ngIf="addressForm.controls.locality.invalid">{{addressForm.get('locality').errors.pattern?'Invalid Locality':addressForm.get('locality').errors.required?' Locality is required':''}}</mat-error> -->
+                    </mat-form-field><br>
+
+
+                    <mat-form-field style="width:100%">
+                      <input formControlName="city" matInput placeholder="City/District" required>
+                      <!-- <mat-error *ngIf="addressForm.controls.district.invalid">{{addressForm.get('district').errors.pattern?'Invalid District':addressForm.get('district').errors.required?' District is required':''}}</mat-error> -->
+                    </mat-form-field><br>
+
+
+                    <mat-form-field style="width:100%">
+                      <input formControlName="state" matInput placeholder="State" required>
+                      <!-- <mat-error *ngIf="addressForm.controls.state.invalid">{{addressForm.get('state').errors.pattern?'Invalid State':addressForm.get('state').errors.required?' State is required':''}}</mat-error> -->
+                    </mat-form-field><br>
+
+                    <mat-form-field style="width:100%">
+                      <input formControlName="line2" matInput placeholder="Address" ngx-google-places-autocomplete
+                        #placesRef1="ngx-places" (onAddressChange)="handleBillingAddress($event)" #address
+                         required>
+                      <!-- <mat-error *ngIf="addressForm.controls.address.invalid">{{addressForm.get('address').errors.pattern?'Invalid Address':addressForm.get('address').errors.required?' Address is required':''}}</mat-error> -->
+                    </mat-form-field><br>
+
+                    <mat-form-field style="width:49%;float:left">
+                      <input formControlName="name" matInput placeholder="Name" required>
+                      <!-- <mat-error *ngIf="addressForm.controls.name.invalid">{{addressForm.get('name').errors.pattern?'Invalid Name':addressForm.get('name').errors.required?' Name is required':''}}</mat-error> -->
+                    </mat-form-field>
+
+                    <mat-form-field style="width:49%;float:right">
+                      <input formControlName="phoneNo" matInput placeholder="Mobile" required>
+                      <!-- <mat-error *ngIf="addressForm.controls.mobile.invalid">{{addressForm.get('mobile').errors.pattern?'Invalid Mobile':addressForm.get('mobile').errors.required?' Mobile is required':''}}</mat-error> -->
+                    </mat-form-field><br>
+
+                  </ng-container>
+                  <button mat-raised-button type="button" (click)="resetAddress()" color="primary"
+                    style="background-color:#d9d9d9;width:150px;height:40px;color:black;margin-right:20px"><b>CANCEL</b></button>
+                  <button mat-raised-button type="submit" color="primary"
+                    style="background-color:#3f51b5;width:150px;height:40px;margin-left:20px"
+                    [style.cursor]="addForm.valid?'pointer':'not-allowed'"><b>SAVE</b></button>
+
+                </form>
+              </mat-card>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="col-sm-4">
+        <div class="table-responsive">
+          <div class="alert alert-info alert-dismissible" *ngIf="someProductsUnavailable">
+            <a class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            Some Products in your cart are unavailable . So those will not be added in your checkout . You can try to
+            change size or quantity of those products .
+          </div>
+
+          <table class="table" style="border:none;margin:auto;width:100%">
+
+            <tbody>
+              <tr>
+                <td colspan="2">
+                  <div class="alert alert-info alert-dismissible"
+                    style="background-color:#e6faff;color:#00b8e6;border:1px solid #00b8e6">
+
+                    <strong>Note - </strong> Delivery charge can be vary during checkout depending upon the delivery
+                    address .
+                  </div>
+                </td>
+              </tr>
+              <tr *ngFor="let product of products;let i = index">
+
+                <td style="max-height:100px;max-width:100px">
+                  <div style="position: relative;text-align: center;color:black">
+                    <!-- <div class="centered" *ngIf="!product.available_products">OUT OF STOCK</div> -->
+                    <img [src]="product.images[0]" style="max-width:100px;max-height:100px"></div>
+                </td>
+                <td>
+
+                  <dl>
+                    <dt><a style="color:#535766">{{product.name}}</a></dt>
+                    <dd style="font-size:12px">Qty : {{product.quantity}}</dd>
+                    <dd>
+                    </dd>
+                    <dd style="font-size:16px">
+                      <span class="price"> Rs. {{product.price}} </span>
+                      <!-- <span class="discount"> ({{product.product_info.discount_percent}}% off)</span> -->
+                      <br><strong class="product-price">Rs. {{product.price}} </strong></dd>
+                  </dl>
+
+
+                </td>
+
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <dl>
+          <dt>
+            Price Details
+          </dt>
+          <hr>
+          <dd style="font-size:14px">
+            <span style="float:left">Total Amount</span><span style="float:right">Rs. {{totalAmount}}</span>
+            <br>
+          </dd>
+          <dd style="font-size:14px">
+            <span style="float:left">Discount</span><span style="float:right" class="discount">- Rs.
+              {{totalDiscount}}</span>
+            <br></dd>
+          <dd style="font-size:14px">
+            <span style="float:left">Coupon Discount</span><span style="float:right" class="discount">- Rs.
+              {{couponDiscount}}</span>
+            <br></dd>
+          <dd style="font-size:14px">
+            <span style="float:left">Delivery</span><span style="float:right"
+              class="discount">{{delieveryCharge == 0?'FREE':'+ '+delieveryCharge}}</span>
+            <br></dd>
+          <hr>
+          <dt>
+            <span style="float:left">Order Total</span><span style="float:right">Rs.
+              {{totalAmount-totalDiscount-couponDiscount+delieveryCharge}}</span>
+          </dt>
+          <dd><br></dd>
+          <dd style="height:50px">
+            <br>
+            <button mat-raised-button [disabled]="!selectedAddress" (click)="goToPaymentPage()"
+              style="width:100%;color:white;background-color:#00A3CB;height:40px;border-radius:2px;border-radius:5px"
+              [style.cursor]="selectedAddress?'pointer':'not-allowed'">
+              <b style="padding:0px">PLACE ORDER</b></button>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</body>

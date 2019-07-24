@@ -1,0 +1,152 @@
+<div class="container-fluid" style="min-height:600px;margin-bottom:0px;display:table" *ngIf="!address">
+  <!-- <div style="display:table-cell;vertical-align:middle;width:100%">
+    <h2 style="text-align:center;color:gray" *ngIf="orderMessage.length>0"><span
+        style="padding:5px;border-radius:6px">{{orderMessage}}</span></h2>
+    <br>
+    <br>
+    <div style="width:250px;padding:10px;margin:auto">
+      <a [routerLink]="['/home']">
+        <button mat-raised-button
+          style="padding:5px;background-color:#2cd2b1;color:white;width:100px"><b>HOME</b></button>
+      </a>
+      <a [routerLink]="['/cart']">
+        <button mat-raised-button
+          style="padding:5px;background-color:lightgray;color:black;width:100px"><b>CART</b></button>
+      </a>
+    </div>
+  </div> -->
+</div>
+<div class="container-fluid" style="min-height:600px;margin-bottom:0px" *ngIf="address">
+  <div class="row" style="padding-top:50px;padding-bottom:50px">
+    <div class="col-sm-8">
+      <mat-card
+        style="padding:0px;max-width:500px;min-height:400px;margin:auto ;background-image: url('');text-align:center;margin-bottom:50px;margin-top:50px">
+        <mat-tab-group>
+          <mat-tab label="CASH ON DELIEVERY"><br>
+            <div style="width:100%">
+              <br>
+              <!-- <form [formGroup]="reactiveForm" (submit)="verifyCaptcha()" style="width:300px;margin: 0 auto; ">
+                        
+                        <re-captcha  siteKey="6Lc6rE8UAAAAAG-E4GIVeX6ZVOrQ_pikPeaeU-pj"   formControlName="recaptchaReactive"></re-captcha><br>
+                        <button mat-raised-button   [disabled]="reactiveForm.invalid" type="submit" color="primary" style="background-color:#5cb85c;height:40px;color:white;width:100px;border-radius:5px" [style.cursor]="reactiveForm.invalid?'not-allowed':'pointer'"><b>PAY</b></button>
+                        <button mat-raised-button type="button" (click)="reactiveForm.reset()" color="primary" style="width:100px;background-color:#F75D59;height:40px;color:white;cursor:pointer;border-radius:5px"><b>RESET</b></button>
+                        </form>  <br><br> -->
+              <dl>
+                <dt style="color:gray">
+                  ORDER TOTAL : Rs. {{totalAmount}}
+                </dt>
+              </dl>
+            </div>
+          </mat-tab>
+
+
+
+          <mat-tab label="OTHER PAYMENT METHODS"><br><br>
+
+            <button mat-raised-button (click)="displayRazorpay($event)" type="button" color="primary"
+              style="background-color:#00A3CB;height:40px"><b>PAY WITH OTHER METHODS</b></button>
+            <br><br>
+            <dl>
+              <dt style="color:gray">
+                ORDER TOTAL : Rs. {{totalAmount}}
+              </dt>
+            </dl>
+
+          </mat-tab>
+        </mat-tab-group>
+
+
+      </mat-card>
+    </div>
+    <div class="col-sm-4">
+      <div [ngStyle]="selectedAddressStyles" class="alert"
+        style="max-width:400px;height:250px;overflow-x:hidden;font-size:14px">
+        <div style="overflow:auto;max-height:245px;top:0;position:absolute;">
+          <dl style="margin-top:10px">
+            <dt>
+              {{address.name}} {{address.isDefault?'(Default)':''}} <span
+                style="margin-left:10px;background-color:#2cd2b1;padding:5px;border-radius:16px;color:white">{{address.type|titlecase}}</span>
+            </dt>
+            <br>
+            <dd>{{address.line2}}</dd>
+            <dd>{{address.line1}}</dd>
+            <dd>{{address.city}} - {{address.pinCode}}</dd>
+            <dd>{{address.state}}</dd>
+            <dd>Mobile : {{address.phoneNo}}</dd>
+          </dl>
+
+        </div>
+
+      </div>
+      <hr>
+      <dl>
+        <dt>
+          Price Details
+        </dt>
+        <hr>
+        <dd style="font-size:14px">
+          <span style="float:left">Total Amount</span><span style="float:right">Rs. {{totalAmount}}</span>
+          <br>
+        </dd>
+        <!-- <dd style="font-size:14px">
+                                                  <span style="float:left">Discount</span><span style="float:right" class="discount">- Rs. {{totalDiscount}}</span>
+                                                  <br></dd>
+                                                <dd style="font-size:14px">
+                                                    <span style="float:left">Coupon Discount</span><span style="float:right" class="discount">- Rs. {{couponDiscount}}</span>
+                                                    <br></dd> -->
+        <dd style="font-size:14px">
+          <span style="float:left">Delivery</span><span style="float:right"
+            class="discount">{{delieveryCharge == 0?'FREE':'+ '+delieveryCharge}}</span>
+          <br></dd>
+        <hr>
+        <dt>
+          <span style="float:left">Order Total</span><span style="float:right">Rs. {{totalAmount}}</span>
+        </dt>
+      </dl>
+
+      <div class="table-responsive">
+        <br>
+
+        <table class="table" style="border:none;margin:auto;width:100%">
+
+          <tbody>
+
+            <tr *ngFor="let product of products;let i = index">
+           
+              <td style="max-height:100px;max-width:100px">
+                <div style="position: relative;text-align: center;color:black">
+                  <!-- <div class="centered" *ngIf="!product.available_products">OUT OF STOCK</div> -->
+                  <img
+                    src="{{product.images[0]}}" style="max-width:100px;max-height:100px"
+                    [style.opacity]="1">
+                </div>
+              </td>
+              <td>
+
+                <dl>
+                  <dt><a [routerLink]="['']" style="color:#535766">
+                      {{product.name}}</a></dt>
+                  <dd style="font-size:12px">Quantity : {{product.quantity}}</dd>
+                  <dd>
+                  </dd>
+                  <dd style="font-size:16px">
+                    <!-- <span class="price"> Rs. {{product.product_info.price*product.cart.quantity}} </span>
+                    <span class="discount"> ({{product.product_info.discount_percent}}% off)</span> -->
+                    <br><strong class="product-price">
+                      Rs. {{product.price}}
+                    </strong></dd>
+                </dl>
+
+
+              </td>
+
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

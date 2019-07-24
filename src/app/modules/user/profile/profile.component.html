@@ -1,0 +1,158 @@
+<body style="background-color:#F2F2F2">
+
+  <div class="container-fluid" style="min-height:700px">
+    <br>
+    <mat-card *ngIf="action=='edit'"
+      style="max-width:500px;min-height:400px;margin:auto ;background-image: url('');text-align:center;box-shadow: 0 0 10px rgba(0,0,0, .65)">
+      <div style="width:100%;top:0;left:0;position:absolute;height:50px;background:#206A8A;padding-top:15px">
+        <h5 style="color:white">EDIT PROFILE</h5>
+      </div>
+      <mat-card-subtitle><b style="color:gray;font-size:18px">EDIT PROFILE</b></mat-card-subtitle>
+      <form [formGroup]="profileForm" #addForm=ngForm (submit)="addForm.valid&&saveEditedProfile()">
+
+
+        <mat-form-field style="width:100%">
+          <input formControlName="email" matInput placeholder="Email" #searchBox required>
+
+          <mat-error *ngIf="profileForm.controls.email.invalid">
+            {{profileForm.get('email').errors.pattern?'Invalid Email':profileForm.get('email').errors.required?' Email is required':''}}
+          </mat-error>
+        </mat-form-field><br>
+
+
+        <mat-form-field style="width:50%;float:left">
+          <input formControlName="password" matInput placeholder="Password" required>
+
+          <mat-error *ngIf="profileForm.controls.password.invalid">
+            {{profileForm.get('password').errors.pattern?'Invalid Password':profileForm.get('password').errors.required?' Password is required':''}}
+          </mat-error>
+        </mat-form-field>
+        <small class="changePasswordLink" style="color:blue;cursor: pointer;" (click)="showMenu = true">Change Password</small>
+        <br>
+
+
+        <mat-form-field style="width:100%">
+          <input formControlName="name" matInput placeholder="Name" required>
+          <mat-error *ngIf="profileForm.controls.name.invalid">
+            {{profileForm.get('name').errors.pattern?'Invalid Name':profileForm.get('name').errors.required?' Name is required':''}}
+          </mat-error>
+        </mat-form-field><br>
+
+        <mat-form-field style="width:100%">
+          <input formControlName="phoneNo" matInput placeholder="Mobile" required>
+          <mat-error *ngIf="profileForm.controls.phoneNo.invalid">
+            {{profileForm.get('phoneNo').errors.pattern?'Invalid Mobile':profileForm.get('phoneNo').errors.required?' Mobile is required':''}}
+          </mat-error>
+        </mat-form-field><br>
+
+        <mat-radio-group formControlName="gender">
+
+          <mat-radio-button value="MALE" style="margin:20px">Male</mat-radio-button>
+          <mat-radio-button value="FEMALE" style="margin:20px">Female</mat-radio-button>
+          <mat-error
+            *ngIf="profileForm.controls.gender.invalid&&(profileForm.controls.gender.dirty||profileForm.controls.gender.touched||addForm.submitted)">
+            Select a gender</mat-error>
+        </mat-radio-group>
+        <br>
+        <button mat-raised-button type="submit" color="primary"
+          style="background-color:#5cb85c;width:150px;margin-right:10px;height:40px;color:white;display:inline-block;border-radius:5px"
+          >
+          Save Profile
+        </button>
+        <button mat-raised-button type="button" color="primary"
+          style="background-color:#F75D59;width:150px;height:40px;color:white;display:inline-block;border-radius:5px"
+         [routerLink]="['/user/profile/view']">
+          Cancel
+        </button>
+      </form>
+    </mat-card>
+
+
+    <mat-card *ngIf="action=='view'"
+      style="max-width:500px;min-height:400px;margin:auto ;background-image: url('');text-align:center;box-shadow: 0 0 10px rgba(0,0,0, .65)">
+      <div style="width:100%;top:0;left:0;position:absolute;height:50px;background:#00A3CB;padding-top:15px">
+        <h5 style="color:white">PROFILE INFORMATION</h5>
+      </div>
+      <mat-card-subtitle><b style="color:gray;font-size:18px">PROFILE INFORMATION</b></mat-card-subtitle>
+      <table class="table table-borderless">
+        <tbody>
+          <tr>
+            <td><span style="float:left">Email</span></td>
+            <td><span style="float:left">{{profileForm.controls.email.value}}</span></td>
+          </tr>
+          <tr>
+            <td><span style="float:left">Name</span></td>
+            <td><span style="float:left">{{profileForm.controls.name.value}}</span></td>
+          </tr>
+          <tr>
+            <td><span style="float:left">Mobile</span></td>
+            <td><span style="float:left">{{profileForm.controls.phoneNo.value}}</span></td>
+          </tr>
+          <tr>
+            <td><span style="float:left">Gender</span></td>
+            <td><span style="float:left">{{profileForm.controls.gender.value}}</span></td>
+          </tr>
+          <tr>
+            <td><span style="float:left">Password</span></td>
+            <td><span style="float:left">{{profileForm.controls.password.value}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <mat-card-subtitle><a style="text-decoration:none" [routerLink]="['/user/profile/edit']"><span
+            style="background-color:#5cb85c;height:40px;color:white;padding:10px;border-radius:5px"><b>EDIT
+              PROFILE</b></span></a>
+      </mat-card-subtitle>
+    </mat-card>
+    <br>
+  </div>
+  <div
+    style="background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);z-index:50;position:fixed;height:100%;width:100%;top:0px;left:0%;padding-top:100px"
+    *ngIf="showMenu&&action=='edit'" [@modal]="'in'">
+    <mat-card
+      style="max-width:500px;min-height:400px;margin:auto ;background-image: url('');text-align:center;box-shadow: 0 0 10px rgba(0,0,0, .65)">
+      <mat-card-subtitle><b style="color:gray;font-size:18px">CHANGE PASSWORD</b></mat-card-subtitle>
+      <form [formGroup]="passwordForm" #passForm=ngForm
+        (ngSubmit)="savePasswordChange()">
+
+
+        <mat-form-field style="width:100%">
+          <input formControlName="oldPassword" matInput placeholder="Old Pasword" [type]="hide?'password':'text'"
+            #searchBox required>
+          <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+          <mat-error *ngIf="passwordForm.controls.oldPassword.invalid">
+            {{passwordForm.get('oldPassword').errors.pattern?'Invalid Old Password':passwordForm.get('oldPassword').errors.required?' Old Password is required':' Password must be 8 characters long'}}
+          </mat-error>
+        </mat-form-field><br>
+        <mat-form-field style="width:100%">
+          <input formControlName="newPassword" [type]="hidePassword?'password':'text'" matInput
+            placeholder="New Password" required>
+          <mat-icon matSuffix (click)="hidePassword = !hidePassword">
+            {{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+          <mat-error *ngIf="passwordForm.controls.newPassword.invalid">
+            {{passwordForm.get('newPassword').errors.pattern?'Invalid New Password':passwordForm.get('newPassword').errors.required?' New Password is required':' New Password must be 8 characters long'}}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field style="width:100%">
+          <input formControlName="confirmPassword" [type]="hideConfirmPassword?'password':'text'" matInput
+            placeholder="Confirm Password" required>
+          <mat-icon matSuffix (click)="hideConfirmPassword = !hideConfirmPassword">
+            {{hideConfirmPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+          <mat-error *ngIf="passwordForm.controls.confirmPassword.invalid">
+            {{passwordForm.get('confirmPassword').errors.pattern?'Invalid Confirm Password':passwordForm.get('confirmPassword').errors.required?' Confirm Password is required':'Confirm Password must be 8 characters long'}}
+          </mat-error>
+        </mat-form-field><br>
+        <small style="color:red"
+          *ngIf="passwordForm.errors.invalid&&passForm.submitted&&passwordForm.controls.newPassword.valid&&passwordForm.controls.oldPassword.valid&&passwordForm.controls.confirmPassword.valid">
+          {{passwordForm.errors.invalid==1?'Your new password is same as old one':(passwordForm.errors.invalid==2?'New password and confirm password field not matched':'New password and confirm password field not matched and Your new password is same as old one')}}</small><br>
+        <button mat-raised-button type="button" color="primary"
+          style="background-color:#d9d9d9;width:150px;height:40px;color:black;margin-right:20px"
+          (click)="cancelPasswordChange()"><b>CANCEL</b></button>
+        <button mat-raised-button type="submit" color="primary"
+          style="background-color:#3f51b5;width:150px;height:40px;margin-left:20px"><b>SAVE</b></button>
+      </form>
+    </mat-card>
+  </div>
+  <app-footer></app-footer>
+</body>

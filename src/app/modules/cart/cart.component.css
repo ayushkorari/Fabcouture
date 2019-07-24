@@ -1,0 +1,86 @@
+.example-radio-group {
+    display: inline-flex;
+    flex-direction: column;
+    width:100%;
+    position: relative;
+  }
+  
+
+  .example-radio-button {
+    width:100%;
+    margin: 5px;border-radius: 8px;padding:5px;font-size:14px
+  }
+  
+  .example-selected-value {
+    margin: 15px 0;
+  }
+  ::ng-deep  .mat-radio-button.mat-primary .mat-radio-inner-circle {
+    background-color: #00b8e6;    transition: transform ease 280ms,background-color ease 280ms;
+}
+::ng-deep .mat-radio-container {
+    box-sizing: border-box;
+    display: inline-block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: -50px;
+}
+::ng-deep .mat-radio-outer-circle {
+    box-sizing: border-box;
+    height: 20px;
+    left: 0;
+    position: absolute;
+    top: 0;
+       transition: transform ease 280ms,background-color ease 280ms;
+    width: 20px;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+}
+::ng-deep   .mat-radio-button.mat-primary.mat-radio-checked .mat-radio-outer-circle {
+    border-color: #00b8e6;
+}
+td{
+    font-size: 15px;
+    color: #697071;
+    font-weight:600;
+    line-height: 19px;
+}
+.order-info{
+    font-size: 15px;
+    color: #697071;
+    font-weight:600;
+    line-height: 19px;
+}
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.price
+{
+    text-decoration: line-through;margin-left:0px;margin-right:2px
+}
+.discount
+{
+    color:#ff5722;margin-left:5px
+}
+product-price
+{
+    font-size: 12px;
+    font-weight: 500;
+    color: #282c3f;
+  margin-top:5px;
+  text-align:center;overflow: hidden;
+  text-overflow: ellipsis;margin:2px;margin-left:auto;margin-right:auto;
+  white-space: nowrap
+}
+

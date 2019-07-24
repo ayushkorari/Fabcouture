@@ -1,0 +1,38 @@
+
+<ng-container *ngIf="product">
+<a [routerLink]="['/product-detail',product.parentId]">
+  <div class="product-parent">
+    <div class="centered" *ngIf="product.status=='inactive'">
+      <p class="out-of-stock"><b>OUT OF STOCK</b></p>
+    </div>
+    <div class="card">
+
+
+      <img [style.opacity]="product.status=='inactive'?0.3:1" [src]="product.images[0]||'https://udown-appfiles.s3.amazonaws.com/5c627c26de7ca512f339512d-640x640.jpg'"
+        alt="Product Image" class="product-image">
+      <div class="card-body">
+
+        <div class="card-title"><strong>{{product.name}}</strong></div>
+        <div class="product-name"></div>
+        <div class="product-price" *ngIf="product"><strong>Rs. {{product|calculate}}</strong></div>
+
+      </div>
+      <div class="size">
+        <div class="product-button">
+
+          <div class="float-left button-left"  (click)="$event.preventDefault();$event.stopPropagation();(wishlist?removeFromWishlist():moveToWishlist())">
+            <strong>{{wishlist?"REMOVE":"SAVE"}}</strong>
+          </div>
+          <div class="float-right button-right" (click)="$event.preventDefault();$event.stopPropagation();addToCart()">
+            <strong>{{wishlist?"MOVE":"ADD"}} TO BAG</strong>
+          </div>
+        </div>
+        <div class="card-title"><strong>{{product.name}}</strong></div>
+        <div class="product-name"></div>
+        <div class="product-price"><strong>Rs. {{product|calculate}}</strong></div>
+      </div>
+
+    </div>
+  </div>
+</a>
+</ng-container>

@@ -1,0 +1,155 @@
+<body style="background-color:#F2F2F2">
+<br>
+<div class="container" style="max-width:700px;min-height:650px;overflow:hidden">
+  <h1 style="color:gray;width:100%;text-align:center;margin-top:200px" *ngIf="message.length>0&&orders.length==0">{{message}}</h1>
+  <mat-card *ngIf="orders.length>0" style="max-width:700px;min-height:400px;margin:auto ;background-image: url('');box-shadow: 0 0 10px rgba(0,0,0, .65)">
+      <div style="width:100%;top:0;left:0;position:absolute;height:50px;background:#00A3CB;padding-top:15px;border:1px solid #00A3CB">
+              <h5 style="color:white;text-align:center"><b>YOUR ORDER HISTORY</b></h5>
+      </div>
+      <br>
+      <ul *ngIf="orders.length>0" style="list-style-type:none;width:100%;font-size:14px;margin:0px;border-radius:5px;padding-left:0px">
+          
+            <li *ngFor="let order of orders;let i=index"  style="color:gray;border-radius:5px;padding:5px;margin-bottom:10px">
+       <br> <h2>{{i+1}} .</h2><br>
+              <mat-accordion multi="true">
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <b style="font-size:14px;color:gray">ORDER DETAILS</b>
+                </mat-panel-title>
+                <mat-panel-description>
+                    <b style="font-size:14px;color:gray">Amount Paid : Rs. {{order.finalAmount}}</b>
+                  </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                          <td>Order ID:</td><td>{{order.orderId||order.createdAt}}</td>
+                        </tr>
+                        <tr>
+                          <td>Order Date:</td><td> {{order.createdAt|date:"medium"}}</td>
+                        </tr>
+                        <tr>
+                          <td>Customer Name:</td><td>{{(order.address?.name)||'-'}}</td>
+                        </tr>
+                        <tr>
+                          <td>Status:</td><td style="text-transform:capitalize">{{order.status|titlecase}}</td>
+                        </tr>
+                    </tbody>    
+                </table>
+              </div>
+              
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <b style="font-size:14px;color:gray">BILL DETAILS</b>
+                </mat-panel-title>
+                
+              </mat-expansion-panel-header>
+              <div class="table-responsive">
+                  <table class="table table-borderless">
+                      <tbody>
+                          <tr>
+                            <td>Address:</td>
+                            <td>
+                                {{(order.address?.line2)||'-'}} 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Contact:</td>
+                            <td> 
+                                {{(order.address?.phoneNo)||'-'}} 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Email:</td><td>ayush@yopmail.com</td>
+                          </tr>
+                          <tr>
+                            <td>Method:</td><td>COD</td>
+                          </tr>
+                      </tbody>    
+                  </table>
+                </div>
+             
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                      <b style="font-size:14px;color:gray">PRODUCT DETAILS</b>
+                  </mat-panel-title>
+                  
+                </mat-expansion-panel-header>
+                <div class="table-responsive" style="color:gray;margin-bottom:0px">
+                    
+                    <table class="table table-borderless">
+                       <thead>
+                         <tr>
+                            <th>
+                            Item
+                            </th>
+                            <th>
+                            Description    
+                            </th>
+                            <th>
+                            Price  
+                            </th>
+                            <!-- <th>
+                            Discount 
+                            </th>
+                            <th>
+                            Total  
+                            </th> -->
+                         </tr>
+                       </thead>
+        
+                       <tbody>
+                         <tr *ngFor="let product of order.products">
+                            <td>
+                            <img [src]="product.productData.images[0]" style="width:80px;height:100px">  
+                            </td>
+                            <td style="width:300px">
+                              <dl>
+                                <dt>{{product.productData.name}}</dt>
+                                <dd>Quantity : {{product.quantity}}</dd>
+                              </dl>
+                            </td>  
+                            <td>
+                              {{product.amount}}
+                            </td>
+                            <!-- <td>
+                              {{product.discount}}
+                            </td> -->
+                            <!-- <td>
+                              {{product.finalPrice}}
+                            </td>   -->
+                         </tr> 
+                         <tr style="color:#00b8e6;">
+                            <td>
+                              <b>SUBTOTAL </b>
+                            </td>
+                            <td><b>Delievery charge : 100</b></td>
+                            <!-- <td>
+                              <b>{{order.finalAmount}}</b>
+                            </td> -->
+                            <!-- <td>
+                              <b>{{order.totalDiscount}}</b>
+                            </td> -->
+                            <td>
+                              <b>{{order.finalAmount+100}}</b>
+                            </td>
+                       </tbody>
+                    </table> 
+                </div>     
+              </mat-expansion-panel>
+          </mat-accordion>
+          </li>
+          <li *ngIf="loadMore" style="padding:10px"><button mat-raised-button style="border:1px solid #526cd0;color:#526cd0;box-shadow:none;width:100%" (click)="getOrders()">Load Order Orders</button></li>
+          </ul>
+  </mat-card>
+  
+  <br>
+</div>
+<app-footer></app-footer>
+</body>

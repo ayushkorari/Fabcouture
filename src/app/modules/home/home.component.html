@@ -1,0 +1,81 @@
+<br>
+<div style="min-height: 1000px">
+<div id="demo" class="carousel slide" data-ride="carousel" style="max-width:1250px;margin: auto">
+
+  <ul class="carousel-indicators">
+    <li data-target="#demo" *ngFor="let slide of slides;let i = index" data-slide-to="i" [class.active]="i==0"></li>
+  </ul>
+  <div class="carousel-inner">
+    <div class="carousel-item " *ngFor="let slide of slides;let i = index" [class.active]="i==0">
+      <a [routerLink]="['/product-page',slide.url]">
+        <img [src]="slide.images[0]" alt="Los Angeles" class="slide-image">
+      </a>
+    </div>
+  </div>
+
+  <a class="carousel-control-prev" *ngIf="slides.length>0" href="#demo" data-slide="prev">
+    <button mat-mini-fab><span class="carousel-control-prev-icon"></span></button>
+
+  </a>
+  <a class="carousel-control-next" *ngIf="slides.length>0" href="#demo" data-slide="next">
+    <button mat-mini-fab><span class="carousel-control-next-icon"></span></button>
+  </a>
+</div>
+
+
+
+
+<div class="container-fluid heading">
+  <div class="row">
+    <div *ngFor="let banner of banners" class="col-sm-6 col-10 mb-2 img-hover-zoom"
+      [routerLink]="['/product-page',banner.url]" style="margin: auto;float: left;">
+      <img [src]="banner.images[0]" style="width: 640px;height: 640px">
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+<div class="container-fluid heading" style="margin: auto">
+  <ng-container *ngFor="let item of headings">
+    <ng-container *ngIf="homePageProducts[item].products?.length">
+      <div style="text-align: center" [style.border-bottom]="'1px solid '+homePageProducts[item].border">
+        <h4 [class]="homePageProducts[item].class">
+          {{homePageProducts[item].viewText}}
+        </h4>
+      </div>
+      <br>
+
+      <div class="row" [style.margin-left]="isMobileDevice()?'1px':null" style="width:100%;margin: auto">
+
+        <div class="col-sm-3 col-6" data-aos="zoom-in-up" data-aos-duration="1500"
+          style="margin-bottom: 10px;float:none;" *ngFor="let product of homePageProducts[item].products">
+
+          <app-single-product [product]="product"></app-single-product>
+        </div>
+        <div class="col-sm-3 col-6" *ngIf="homePageProducts[item].products?.length"
+          [routerLink]="['/product-page',homePageProducts[item].url]">
+          <div style="display:inline-block;margin-bottom:-92px;width: 100%" class="card">
+            <div style="height:100%;width:100%;display:table">
+              <a style="display:table-cell;vertical-align:middle;text-align:center;margin:auto"
+                [style.color]="homePageProducts[item].border">
+                <h5> <button [style.color]="homePageProducts[item].border"
+                    [style.border]="'1px solid '+homePageProducts[item].border" mat-mini-fab
+                    style="margin-right:10px;background-color:white">
+                    <mat-icon>arrow_forward</mat-icon>
+                  </button>SEE ALL</h5>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </ng-container>
+</div>
+</div>
+<app-footer></app-footer>

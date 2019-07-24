@@ -1,0 +1,204 @@
+<body>
+
+  <div
+    style="background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);z-index:500;position:fixed;height:100%;width:100%;top:0"
+    *ngIf="loading">
+    <mat-spinner style="margin:auto;top:40%" [diameter]="70" color="accent"></mat-spinner>
+  </div>
+
+
+
+  <nav class="navbar navbar-expand-lg fixed-top" style="z-index:20">
+    <a class="navbar-brand dropdown-menu-left" [routerLink]="['/home']"
+      [style.margin-left]="isMobileDevice()?'50px':'170px'">
+      <img
+        src="https://cdn1.storehippo.com/s/5a6ef16301bd210c588e3577/ms.settings/5256837ccc4abf1d39000001/5ad47d887166d3c06e350538-480x480.png"
+        class="home-image">
+    </a>
+    <button class="nav-toggle" class="navbar-toggler" type="button" data-toggle="collapse"
+      data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="true"
+      aria-label="Toggle navigation">
+      <mat-icon>view_headline</mat-icon>
+    </button>
+
+
+
+    <div id="navbarSupportedContent" class="collapse navbar-collapse">
+      <ul class="navbar-nav  men-menu" *ngFor="let category of getCategories(null)">
+        <li class="nav-item dropdown" style="justify-content:center;cursor:pointer">
+          <a class="nav-link" [routerLink]="['/product-page',category.url]" id="navbardrop" data-toggle="dropdown">
+            {{category.name}}
+          </a>
+          <div class="dropdown-menu " id="product-dropdown"
+            style="position:fixed;top:79px;width:100%;height:500px;overflow:auto">
+            <div class="container">
+              <div class="table-responsive" style="width:100%">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td *ngFor="let subcat of getCategories(category._id)">
+                        <dl>
+                          <dt>
+                            <a [routerLink]="['/product-page',subcat.url]">
+                              {{subcat.name}}
+                            </a>
+                          </dt>
+                          <p>
+                            <dd *ngFor="let sub of getCategories(subcat._id)">
+                              <a [routerLink]="['/product-page',sub.url]">
+                                {{sub.name.toLowerCase()}}
+                              </a>
+                            </dd>
+                          </p>
+
+                        </dl>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
+            </div>
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar-nav searchbox" style="margin-left:5px;padding-top:5px">
+        <li class="nav-item">
+          <form class="form-inline">
+            <mat-form-field style="width:450px">
+              <input matInput placeholder="Search Products" [formControl]="search" [matAutocomplete]="auto" autofocus>
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event)">
+                <mat-option *ngFor="let search of searchResults" [value]="search">{{search.name}}</mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>
+        </li>
+      </ul>
+
+
+      <ul class="navbar-nav profile-menu" style="margin:auto">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link" id="navbardrop" data-toggle="dropdown" style="cursor:pointer">
+            <mat-icon style="color:gray;font-size:200%;cursor:pointer">person</mat-icon><sup>
+              <mat-icon style="color:gray;padding:10px">arrow_drop_down</mat-icon>
+            </sup>
+          </a>
+          <div class="profile dropdown-menu dropdown-menu-right" *ngIf="!loggedIn"
+            style="max-width:300px;height:150px;padding:10px;padding-left:10px">
+            <dl>
+              <dt>
+                Your Account
+              </dt>
+              <dd>
+                Login and manage your orders
+              </dd>
+              <dd style="padding-top: 10px">
+                <a [routerLink]="['/login']"><button type="button"
+                    style="width:130px;color:#526cd0;background-color:white;border:1px solid #526cd0;height:40px;border-radius:2px;cursor:pointer">
+                    <b style="padding:0px">Login</b></button></a>
+                <a [routerLink]="['/login']"> <button
+                    style="width:130px;color:#526cd0;background-color:white;border:1px solid #526cd0;height:40px;border-radius:2px;cursor:pointer;margin-left:5px">
+                    <b style="padding:0px">Register</b></button></a>
+              </dd>
+            </dl>
+          </div>
+          <div class="profile dropdown-menu dropdown-menu-right" *ngIf="loggedIn"
+            style="max-width:300px;max-height:350px;padding:10px">
+            <dl>
+              <a style="color:black;text-decoration:none" [routerLink]="['/user/profile/view']">
+                <dt>
+                  {{userDetail.name}}
+                </dt>
+                <dd>
+                  {{userDetail.email}}
+                </dd>
+              </a>
+            </dl>
+            <hr>
+            <dl>
+              <dt>
+                <a style="color:black"> My Account</a>
+              </dt>
+              <dd>
+                <a [routerLink]="['/user/wishlist']">Wishlist</a>
+              </dd>
+              <dd>
+                <a [routerLink]="['/user/orders']">Orders</a>
+              </dd>
+
+              <dd>
+                <a [routerLink]="['/user/savedAddresses']">Saved Addresses</a>
+              </dd>
+            </dl>
+            <hr>
+            <dl>
+              <dt>
+                <a style="color:black" [routerLink]="['/user/profile/edit']">Edit Profile</a>
+              </dt>
+              <dt>
+                <a style="color:black" (click)="logout()">Log Out</a>
+              </dt>
+            </dl>
+          </div>
+        </li>
+      </ul>
+     
+      <ul class="navbar-nav profile-menu" style="margin:auto">
+
+        <li class="nav-item dropdown">
+          <a class="nav-link" id="navbardrop" data-toggle="dropdown" style="cursor:pointer">
+            <mat-icon style="color:gray;font-size:200%;cursor:pointer">notifications</mat-icon>
+          </a>
+          <div class="profile dropdown-menu dropdown-menu-right" *ngIf="loggedIn"
+            style="max-width:300px;max-height:500px;padding:10px;overflow: auto">
+            <dl>
+              <a style="color:black;text-decoration:none;cursor: pointer" *ngFor="let item of notifications">
+                <dd>
+                    {{item.message}}
+                </dd>
+                <hr>
+              </a>
+            </dl>
+          </div>
+        </li>
+      </ul>
+      <!-- <ul class="navbar-nav profile-menu" style="margin:auto" *ngIf="loggedIn">
+        <li class="nav-item dropdown">
+          <a class="nav-link" style="cursor:pointer">
+            <mat-icon style="color:gray;font-size:200%;cursor:pointer">notifications</mat-icon>
+          </a>
+          <dl>
+            <dd *ngFor="let item of notifications">
+              {{item.message}}
+            </dd>
+          </dl>
+        </li>
+      </ul> -->
+
+
+      <a [routerLink]="['/cart']">
+        <ul class="navbar-nav  ml-auto profile-menu" style="margin-right:50px">
+
+          <li class="nav-item dropdown" style="padding:10px;margin-top:0px;cursor:pointer;color:gray">
+
+            <a>
+              <mat-icon style="color:gray">shopping_cart</mat-icon><sup
+                style="color:white;border-radius:4px;background-color:#526cd0;font-size:18px;padding-left:5px;padding-right:5px"
+                *ngIf="totalCartProducts>0">{{totalCartProducts}}</sup>
+            </a>
+          </li>
+        </ul>
+      </a>
+    </div>
+    <!--/.nav-collapse -->
+  </nav>
+
+
+  <div [style.margin-top]="'80px'" style="width:100%;z-index:1;background-color:white;overflow:auto;overflow-x:auto">
+    <router-outlet></router-outlet>
+  </div>
+  <button (click)="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+</body>

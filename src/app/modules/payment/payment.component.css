@@ -1,0 +1,48 @@
+dd
+{
+    font-size:13px
+}
+.price
+{
+    text-decoration: line-through;margin-left:0px;margin-right:2px
+} 
+.discount
+{
+    color:#ff5722;margin-left:5px
+}
+product-price
+{
+    font-size: 12px;
+    font-weight: 500;
+    color: #282c3f;
+  margin-top:5px;
+  text-align:center;overflow: hidden;
+  text-overflow: ellipsis;margin:2px;margin-left:auto;margin-right:auto;
+  white-space: nowrap
+}
+td{
+    font-size: 15px;
+    color: #697071;
+    font-weight:600;
+    line-height: 19px;
+}
+.order-info{
+    font-size: 15px;
+    color: #697071;
+    font-weight:600;
+    line-height: 19px;
+}
+:host ::ng-deep  .mat-tab-label-container
+{
+    background-color: #008080;
+}
+:host ::ng-deep  .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: white;
+}
+
+:host ::ng-deep  .mat-tab-label, .mat-tab-link {
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color:white;opacity: 1;
+}

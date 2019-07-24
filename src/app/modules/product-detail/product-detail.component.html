@@ -1,0 +1,233 @@
+<body>
+
+  <div class="container-fluid" style="height:500px" *ngIf="!product">
+    <!-- <h1 *ngIf="!error" style="text-align:center;margin-top:300px">No Product Found</h1> -->
+  </div>
+  <div class="container-fluid" *ngIf="product">
+
+    <div class="container-fluid" style="min-height:550px;max-width:1400px;margin: auto">
+
+      <div class="row">
+        <div class="col-lg-6">
+
+          <div class="table-responsive">
+            <table class="table">
+
+              <tbody>
+                <tr>
+                  <td style="width:20%">
+                    <ul style="list-style-type:none;padding:0px;float:left">
+                      <li *ngFor="let image of product.images;let i=index">
+                        <img src="{{image}}" (mouseover)="selectedImage=i"
+                          style="margin-top:10px;width:70%;height:70%;cursor:pointer"
+                          [style.border]="selectedImage==i ? '1px solid #20bd99' : 'none'">
+                      </li>
+
+                    </ul>
+                  </td>
+                  <td style="width:80%">
+
+                    <div style="float:right;height:100%;width:100%;position:relative">
+                      <div class="centered" *ngIf="product.status=='inactive'">
+                        <p [style.padding-top]="isMobileDevice()?'130px':'250px'" style="font-size:25px"><b>OUT OF
+                            STOCK</b></p>
+                      </div>
+                      <img [src]="product.images[selectedImage]" [style.opacity]="product.status=='inactive'?0.3:1"
+                        style="cursor:pointer;width:100%;height:100%" alt="" (click)="showImageMenu=true" />
+                    </div>
+                  </td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-lg-6 product-details">
+          <div id="overlay" [style.background-image]="'url('+product.images[selectedImage]+')'">
+          </div>
+          <div>
+            <h1 class="product-title"> {{product.name}}</h1>
+            <br>
+            <dl>
+              <dd  *ngFor="let price of product.price">
+                {{price.lowerLimit}} - {{price.upperLimit}} {{priceType[product.metafields?.unitType]}} <strong class="product-price"> Rs. {{price.adminPrice}}</strong>
+              </dd>
+            </dl>
+            <br><span class="product-vatInfo">Additional tax may apply; charged at checkout</span>
+            <hr>
+            <dl>
+              <dt>Free Shipping</dt>
+              <dd>On orders of Rs. 2000 or above ( can be vary according to your delievery address )</dd>
+              <dt>Check Delievery</dt>
+              <dd>
+                <form [formGroup]="addressForm" (submit)="addressForm.valid&&checkPin()">
+                  <mat-form-field style="width:350px">
+                    <input formControlName="pincode" matInput [readonly]="pincodeSpinner" placeholder="Pincode"
+                     (keyup.enter)="addressForm.valid&&checkDelivery()" required>
+                    <mat-icon matSuffix>
+                      <mat-spinner *ngIf="pincodeSpinner" [diameter]="30"></mat-spinner>
+                    </mat-icon>
+                  </mat-form-field>
+                </form>
+                <span *ngIf="pincodeAvailabilty.length>0&&addressForm.valid"
+                  [style.color]="pincodeAvailabilty=='available'?'#526cd0':'#ff5722'">
+                  {{pincodeAvailabilty=='available'?'This Product is Available In This Location':'This Product is Not Available In This Location'}}
+                </span>
+              </dd>
+
+            </dl>
+
+            <hr>
+            <ng-container [formGroup]="quantityForm">
+              <dl>
+                <dt>SELECT QUANTITY</dt>
+                <dd>
+
+                  <mat-form-field style="width:135px" appearance="outline">
+                    <mat-label>Quantity</mat-label>
+                    <mat-icon matPrefix style="color: #20bd99;cursor:pointer" (click)="changeQuantity(false)">
+                      remove_circle
+                    </mat-icon>
+                    <input formControlName="quantity"  style="text-align: center" matInput>
+                    <mat-icon matSuffix style="color: #20bd99;cursor:pointer" (click)="changeQuantity()">
+                      add_circle
+                    </mat-icon>
+                    <mat-error></mat-error>
+                  </mat-form-field>
+
+                </dd>
+
+              </dl>
+              <button mat-raised-button type="button" (click)="addToWishlist()" style="width:150px;color:white;background-color:#535766">
+                SAVE
+              </button>
+              <button mat-raised-button type="submit" (click)="addToCart()"
+                [style.cursor]="quantityForm.invalid?'not-allowed':'pointer'"
+                style="margin-left:5px;width:150px;color:white;background-color:#20bd99">
+                ADD TO BAG
+              </button>
+              <button mat-raised-button type="button" (click)="raiseQuery()" style="margin-left:5px;width:150px;color:white;background-color:#5cb85c">
+                RAISE QUERY
+              </button>
+            </ng-container>
+            <hr>
+            <dl>
+              <dt>Product Details</dt>
+              <dd style="font-size:14px">{{product.description}}</dd>
+            </dl>
+            <ul style="list-style-type:none;padding-left:0px;color:gray;font-size:13px;margin-bottom:20px">
+              <li>
+                100% Original Products
+              </li>
+              <li>
+                Cash on delivery might be available
+              </li>
+              <li>
+                Easy 30 days returns & 30 days exchanges
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    style="background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);z-index:50;position:fixed;height:100%;width:100%;top:0px"
+    *ngIf="showImageMenu" [@modal]="'in'">
+    <div style="height:100%;position:fixed;z-index:5;top:0px;background-color:white; padding:10px;   box-sizing: border-box;
+          box-shadow: 0 1px 8px rgba(0,0,0,.1);
+          background: #fff;
+          border: 1px solid #eaeaec;padding:10px;overflow:auto;width:100%" *ngIf="showImageMenu">
+      <span class="close" (click)="showImageMenu=false">&times;</span>
+
+      <div class="table-responsive" style="width:100%">
+        <table class="table" style="width:100%">
+
+          <tbody>
+            <tr>
+              <td style="width:20%">
+                <ul style="list-style-type:none;padding:0px;float:left">
+                  <li *ngFor="let image of product.images;let i=index">
+                    <img [src]="image" (mouseover)="selectedImage=i"
+                      style="cursor:pointer;margin-top:10px;width:80px;height:100px"
+                      [style.border]="selectedImage==i ? '1px solid #20bd99' : 'none'">
+                  </li>
+
+                </ul>
+              </td>
+              <td style="width:80%;">
+
+                <p style="text-align:center;height:100%;width:100%">
+                  <img [src]="product.images[selectedImage]" style="cursor:pointer;max-width:100%;max-height:100%"
+                    alt="" />
+                </p>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid heading" *ngIf="optionVariants.length"
+    style="margin: auto">
+    <div style="text-align: center" [style.border-bottom]="'1px solid #FE980F'">
+      <h4 class="recommended" style="width:450px">
+        OTHER VARIANTS
+      </h4>
+    </div>
+    <br>
+
+    <div class="row" [style.margin-left]="isMobileDevice()?'1px':null" style="width:100%;margin: auto">
+
+      <div class="col-sm-3 col-6" data-aos="zoom-in-up" data-aos-duration="1500" style="margin-bottom: 10px;float:none;"
+        *ngFor="let product of optionVariants">
+
+        <app-single-product [product]="product"></app-single-product>
+      </div>
+
+    </div>
+  </div>
+  <div class="container-fluid heading" *ngIf="similarProducts.length"
+    style="margin: auto">
+    <div style="text-align: center" [style.border-bottom]="'1px solid #FE980F'">
+      <h4 class="recommended" style="width:300px">
+        SIMILAR PRODUCTS
+      </h4>
+    </div>
+    <br>
+
+    <div class="row" [style.margin-left]="isMobileDevice()?'1px':null" style="width:100%;margin: auto">
+
+      <div class="col-sm-3 col-6" data-aos="zoom-in-up" data-aos-duration="1500" style="margin-bottom: 10px;float:none;"
+        *ngFor="let product of similarProducts">
+
+        <app-single-product [product]="product"></app-single-product>
+      </div>
+
+    </div>
+  </div>
+  <div class="container-fluid heading" *ngIf="recommendedProducts.length"
+    style="margin: auto">
+    <div style="text-align: center" [style.border-bottom]="'1px solid #FE980F'">
+      <h4 class="recommended" style="width:450px">
+        RECOMMENDED PRODUCTS
+      </h4>
+    </div>
+    <br>
+
+    <div class="row" [style.margin-left]="isMobileDevice()?'1px':null" style="width:100%;margin: auto">
+
+      <div class="col-sm-3 col-6" data-aos="zoom-in-up" data-aos-duration="1500" style="margin-bottom: 10px;float:none;"
+        *ngFor="let product of recommendedProducts">
+
+        <app-single-product [product]="product"></app-single-product>
+      </div>
+
+    </div>
+  </div>
+  <app-footer></app-footer>
+
+</body>

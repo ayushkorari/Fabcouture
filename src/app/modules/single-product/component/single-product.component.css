@@ -1,0 +1,144 @@
+
+div.product-name {
+    color: #3e4152;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    white-space: nowrap;
+}
+
+div.product-price {
+    font-size: 12px;
+    font-weight: 500;
+    color: #282c3f;
+    margin-top: 5px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    white-space: nowrap
+}
+
+.col-md-2 {
+    padding-right: 0px;
+    margin-bottom: 10px;
+}
+
+/* centered columns styles */
+
+.row-centered {
+    text-align: center;
+}
+
+.col-centered {
+    display: inline-block;
+    float: none;
+    text-align: left;
+    margin-right: -4px;
+    text-align: center;
+}
+
+.price {
+    text-decoration: line-through;
+    margin-left: 2px;
+    margin-right: 2px
+}
+
+.discount {
+    color: #ff5722
+}
+
+.internal {
+    padding-top: 10px;
+}
+
+.external {
+    margin-bottom: 50px
+}
+
+.size-button {
+    text-align: center;
+    font-size: 12px;
+    margin: 3px;
+    color: gray;
+    background-color: white;
+    border: 1px solid lightgray;
+}
+
+.size-button:hover {
+    color: purple;
+    border: 1px solid purple;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.centered {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    color: black;
+    z-index: 1;
+    text-align: center
+}
+
+.product-parent {
+    position: relative;
+    height: 420px;
+   
+}
+
+.out-of-stock {
+    padding-top: 110px;
+    height: 180px
+}
+
+.product-image {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 0px
+}
+
+.product-button {
+    width: 103%;
+    height: 30px;
+    margin-top: -2px;
+    margin-left: -2px;
+    margin-right: -2px;
+    padding: 0px
+}
+
+.button-left {
+    color: black;
+    background-color: #d9d9d9;
+    padding: 2px;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 12px;
+    border-right: 1px solid lightgray;
+    width: 50%;
+    cursor: pointer;
+    height: 100%
+}
+
+.button-right {
+    color: white;
+    background-color: #80ccff;
+    padding: 2px;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 12px;
+    width: 50%;
+    cursor: pointer;
+    height: 100%
+}

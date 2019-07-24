@@ -1,0 +1,176 @@
+<div id="snackbar"></div>
+<div style="min-height: 800px">
+  <div class="container-fluid" *ngIf="products.length<=0" style="min-height:600px">
+    <div style="color:#526cd0;margin:auto;top:30%;position:absolute" [style.left]="isMobileDevice()?'20%':'40%'">
+      <h4> <button mat-mini-fab style="color:#526cd0;border:1px solid #526cd0;background-color:white">
+          <mat-icon>shopping_cart</mat-icon>
+        </button> Your Cart Is Empty.</h4>
+      <a [routerLink]="['/user/wishlist']"> <button mat-button
+          style="border:1px solid #526cd0;margin:auto;width:100%;color:#526cd0;background-color:white">Add Item From
+          Wishlist</button></a>
+    </div>
+  </div>
+  <div class="container-fluid" *ngIf="products.length>0">
+    <div class="row" style="padding-top:50px;padding-bottom:50px">
+      <div class="col-sm-9">
+        <div class="table-responsive container">
+
+
+          <table class="table" style="border:none;margin:auto;width:80%">
+
+            <tbody>
+              <tr *ngIf="someProductsUnavailable">
+                <td colspan="2">
+                  <div class="alert alert-info alert-dismissible"
+                    style="background-color:#e6faff;color:#00b8e6;border:1px solid #00b8e6">
+
+                    Some Products in your cart are unavailable . So you have to move them to wishlist or remove them
+                    before checkout . You can try to change size or quantity of those products if they are not
+                    <strong>completly</strong> out of stock .
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <div class="alert alert-info alert-dismissible"
+                    style="background-color:#e6faff;color:#00b8e6;border:1px solid #00b8e6">
+
+                    <strong>Note - </strong> Delivery charge can be vary during checkout depending upon the delivery
+                    address .
+                  </div>
+                </td>
+              </tr>
+              <tr *ngFor="let product of products;let i = index">
+
+                <td style="max-height:150px;max-width:150px">
+                  <div style="position: relative;text-align: center;color:black">
+                    <!-- <div class="centered" *ngIf="product.available_products">
+                    {{product.status=='inactive'?'COMPLETLY ':''}}OUT OF STOCK
+                  </div> -->
+                    <img [src]="product.images[0]" style="max-width:150px;max-height:150px"
+                      [style.opacity]="!product.available_products?1:0.3">
+                  </div>
+                </td>
+                <td>
+
+                  <dl>
+                    <dt><a style="color:#535766"> {{product.name}}</a></dt>
+                    <!-- <dd style="font-size:12px">Size : {{product.cart.size}} , Qty : {{product.cart.quantity}}</dd> -->
+                    <dd>
+
+                      <mat-form-field style="width:135px;margin-top: 5px" appearance="outline">
+                        <mat-label>Quantity</mat-label>
+                        <mat-icon matPrefix style="color: #20bd99;cursor:pointer" (click)="changeQuantity(i,false)">
+                          remove_circle
+                        </mat-icon>
+                        <input [(ngModel)]="product.quantity" (input)="updateCartProducts(product)"
+                          style="text-align: center" matInput>
+                        <mat-icon matSuffix style="color: #20bd99;cursor:pointer" (click)="changeQuantity(i)">
+                          add_circle
+                        </mat-icon>
+                        <mat-error></mat-error>
+                      </mat-form-field>
+                    </dd>
+                    <dd style="font-size:16px">
+                      <!-- <span class="price"> Rs. {{product.price}} </span>
+                    <span class="discount"> (10% off)</span> -->
+                      <!-- <br> -->
+                      <strong class="product-price">Rs. {{product.price}}</strong></dd>
+                  </dl>
+                  <hr>
+                  <button mat-raised-button style="width:150px;color:white;background-color:#535766;border-radius:5px"
+                    (click)="updateCartProducts(product,{})"><b>Remove</b></button>
+                  <button mat-raised-button
+                    style="margin-left:10px;width:150px;color:white;background-color:rgb(32, 189, 153);margin-top:10px;border-radius:5px"
+                    (click)="updateCartProducts(product,{moveToWishlist:true})"><b>Move To Wishlist</b></button>
+                </td>
+
+              </tr>
+              <tr>
+                <td colspan="2"><a [routerLink]="['/user/wishlist']"><button mat-raised-button
+                      style="box-shadow:none;border:1px solid #526cd0;margin:auto;width:100%;color:#526cd0;background-color:white">Add
+                      Item From Wishlist</button></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-3 order-info" *ngIf="products.length>0">
+        <dl style="width:70%;margin:auto">
+          <dt>Check Delievery</dt>
+          <dd>
+            <form [formGroup]="addressForm" #addForm=ngForm>
+              <mat-form-field style="width:100%">
+                <input formControlName="pincode" matInput (blur)="addressForm.valid&&checkDelivery()"
+                  (keyup.enter)="addressForm.valid&&checkDelivery()" placeholder="Pincode" required>
+                <mat-icon matSuffix>
+                  <mat-spinner *ngIf="pincodeSpinner" [diameter]="30"></mat-spinner>
+                </mat-icon>
+              </mat-form-field>
+
+            </form>
+            <span *ngIf="pincodeAvailabilty.length>0"
+              [style.color]="pincodeAvailabilty=='available'?'#526cd0':'#ff5722'">{{pincodeAvailabilty=='available'?'This order is delieverable In This Location':'This order is not delieverable In This Location'}}
+              <span *ngIf="pincodeAvailabilty=='available'"><br>( Delievery Charge -
+                {{calculatedDelieveryCharge==0?'free':'Rs. '+calculatedDelieveryCharge}} )</span>
+              <hr></span>
+          </dd>
+          <dd><span
+              style="color:#526cd0;padding:0px">{{selectedCouponIndex>=0?'Coupon Applied - '+validCoupons[selectedCouponIndex].couponCode:''}}</span>
+          </dd>
+          <dd style="height:50px">
+
+            <button
+              style="width:100%;color:#526cd0;background-color:white;border:1px solid #526cd0;height:40px;border-radius:2px;cursor:pointer">
+              <b style="padding:0px">{{selectedCouponIndex>=0?'Edit':'Apply Coupon'}}</b></button>
+          </dd>
+
+
+          <dt>
+            Price Details
+          </dt>
+          <hr>
+          <dd style="font-size:14px">
+            <span style="float:left">Total Amount</span><span style="float:right">Rs. {{calculateAmount()}}</span>
+            <br>
+          </dd>
+          <!-- <dd style="font-size:14px">
+          <span style="float:left">Discount</span><span style="float:right" class="discount">- Rs. 0</span>
+          <br></dd>
+        <dd style="font-size:14px">
+          <span style="float:left">Coupon Discount</span><span style="float:right" class="discount">- Rs. 0</span>
+          <br></dd> -->
+          <dd style="font-size:14px">
+            <span style="float:left">Delivery</span><span style="float:right" class="discount">Rs.
+              {{delieveryCharge}}</span>
+            <br></dd>
+          <hr>
+          <dt>
+            <span style="float:left">Order Total</span><span style="float:right">Rs.
+              {{calculateAmount()+delieveryCharge}}</span>
+          </dt>
+          <dd><br></dd>
+          <dd style="height:50px">
+
+            <button mat-raised-button
+              style="width:100%;color:white;background-color:rgb(32, 189, 153);height:40px;border-radius:2px;cursor:pointer;border-radius:5px"
+              (click)="raiseQuery()">
+              <b style="padding:0px">RAISE QUERY</b></button>
+          </dd>
+
+          <dd style="height:50px">
+
+            <button mat-raised-button
+              style="width:100%;color:white;background-color:#00A3CB;height:40px;border-radius:2px;cursor:pointer;border-radius:5px"
+              [routerLink]="['/address']">
+              <b style="padding:0px">PLACE ORDER</b></button>
+          </dd>
+        </dl>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
